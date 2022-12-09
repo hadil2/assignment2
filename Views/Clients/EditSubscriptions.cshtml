@@ -1,0 +1,119 @@
+﻿@model Lab4.Models.ViewModels.BrokeragesViewModel
+
+@{
+	ViewData["Title"] = "EditSubscriptions";
+}
+
+<h1>Edit Subsctiptions</h1>
+<h4>Client</h4>
+
+@{
+    int ID = 0;
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Full Name
+            </th> 
+            
+            @foreach(var item in Model.Clients)
+            {
+                if(item.ID.ToString() == ViewData["ClientID"].ToString())
+                {
+                    
+                    ID = item.ID;
+                    
+                    <td>@item.FullName</td>
+                }
+            }
+            
+        </tr>
+    </thead>
+    @{
+        int counter = 0;
+        var array = new List<string>();
+    }
+    @if (Model.Subscriptions.Count() > 0)
+    {
+        @foreach (var item in Model.Subscriptions)
+        {
+            if (counter < Model.Subscriptions.Count())
+            {
+
+                foreach (var item2 in Model.Brokerages)
+                {
+                    @if (item2.Id == item.BrokerageId)
+                    {
+                        array.Add(item2.Title);
+                        <tr>
+                            <td>
+                                @item2.Title
+                            </td>
+                            <td>
+                                <form asp-action="RemoveSubscriptions">
+                                    <input type="hidden" asp-route-id="@item.ClientId" />
+                                    <a asp-action="RemoveSubscriptions" asp-route-id1="@item.ClientId" asp-route-id2="@item.BrokerageId">UnRegister</a>|
+                                </form>
+
+                            </td>
+                        </tr>
+                        counter++;
+                        break;
+                    }
+
+                }
+            }
+        }
+    }
+    @foreach (var item2 in Model.Brokerages)
+    {
+        @if(array.Count()>0)
+        {
+            for(int i = 0; i<array.Count();i++)
+            {
+                if(item2.Title != array[i])
+                {
+                <tr>
+                    <td>
+                        @item2.Title
+                    </td>
+                    <td>
+                        <form asp-action="AddSubscriptions">
+                            <input type="hidden" asp-route-id="@ID" />
+                            <a asp-action="AddSubscriptions" asp-route-id1="@ID" asp-route-id2="@item2.Id">Register</a>
+                        </form>
+
+                    </td>
+                    </tr>
+                    counter++;
+
+                }
+            }
+        }
+        else
+        {
+            <tr>
+                <td>
+                    @item2.Title
+                </td>
+                <td>
+                    <form asp-action="AddSubscriptions">
+                        <input type="hidden" asp-route-id="@ID" />
+                        <a asp-action="AddSubscriptions" asp-route-id1="@ID" asp-route-id2="@item2.Id">Register</a>
+                    </form>
+
+                </td>
+            </tr>
+            counter++;
+
+        }
+        
+    }
+    
+</table>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
