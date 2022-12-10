@@ -34,47 +34,55 @@
     @{
         int counter = 0;
         var array = new List<string>();
+        bool flag = false;
     }
     @if (Model.Subscriptions.Count() > 0)
     {
         @foreach (var item in Model.Subscriptions)
-        {
-            if (counter < Model.Subscriptions.Count())
+        {            
+
+            foreach (var item2 in Model.Brokerages)
             {
-
-                foreach (var item2 in Model.Brokerages)
+                @if (item2.Id == item.BrokerageId)
                 {
-                    @if (item2.Id == item.BrokerageId)
-                    {
-                        array.Add(item2.Title);
-                        <tr>
-                            <td>
-                                @item2.Title
-                            </td>
-                            <td>
-                                <form asp-action="RemoveSubscriptions">
-                                    <input type="hidden" asp-route-id="@item.ClientId" />
-                                    <a asp-action="RemoveSubscriptions" asp-route-id1="@item.ClientId" asp-route-id2="@item.BrokerageId">UnRegister</a>|
-                                </form>
+                    array.Add(item2.Title);
+                    <tr>
+                        <td>
+                            @item2.Title
+                        </td>
+                        <td>
+                            <form asp-action="RemoveSubscriptions">
+                                <input type="hidden" asp-route-id="@item.ClientId" />
+                                <a asp-action="RemoveSubscriptions" asp-route-id1="@item.ClientId" asp-route-id2="@item.BrokerageId">UnRegister</a>
+                            </form>
 
-                            </td>
-                        </tr>
-                        counter++;
-                        break;
-                    }
-
+                        </td>
+                    </tr>
+                    counter++;
+                    break;
                 }
+
             }
+            
         }
     }
+    
+    
+        
     @foreach (var item2 in Model.Brokerages)
     {
         @if(array.Count()>0)
         {
+            flag = false;
             for(int i = 0; i<array.Count();i++)
             {
-                if(item2.Title != array[i])
+                if(item2.Title == array[i])
                 {
+                    flag = true;
+                }
+            }
+            if(!flag)
+            {
                 <tr>
                     <td>
                         @item2.Title
@@ -84,12 +92,10 @@
                             <input type="hidden" asp-route-id="@ID" />
                             <a asp-action="AddSubscriptions" asp-route-id1="@ID" asp-route-id2="@item2.Id">Register</a>
                         </form>
-
                     </td>
-                    </tr>
-                    counter++;
-
-                }
+                </tr>
+                counter++;
+                flag = false;
             }
         }
         else
@@ -111,6 +117,7 @@
         }
         
     }
+    
     
 </table>
 
